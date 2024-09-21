@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
 
+interface Repository {
+  id: number;
+  name: string;
+  description: string;
+  language: string;
+  full_name: string;
+  updated_at: string;
+}
+
 export default function useGithubUserRepositories(username: string | undefined) {
   const [loading, setLoading] = useState(true);
-  const [repositories, setRepositories] = useState<any>([]);
+  const [repositories, setRepositories] = useState<Repository[]>([]);
   const [languages, setLanguages] = useState<any>({});
   const [totalRepositories, setTotalRepositories] = useState(0);
 
@@ -13,7 +22,7 @@ export default function useGithubUserRepositories(username: string | undefined) 
 
     fetch(`https://api.github.com/users/${username}/repos`)
       .then((response) => response.json())
-      .then((data) => {
+      .then((data: Repository[]) => {
         setLoading(false);
         data.sort((a, b) => b.updated_at > a.updated_at ? 1 : -1);
         const first10Repos = data.slice(0, 10);

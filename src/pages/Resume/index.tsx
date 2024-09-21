@@ -43,7 +43,7 @@ export default function Resume() {
         </p>
       ) : (
         <>
-          <h3>Languages</h3>
+          <h3>Languages:</h3>
           <ul>
             {languages && Object.keys(languages).map((language) => (
               <li key={language}>
@@ -52,6 +52,24 @@ export default function Resume() {
             ))}
           </ul>
           <hr/>
+          <h3>Repositories:</h3>
+          {repositories.map(repo => (
+            <div key={repo.id}>
+              <p>
+                <strong>Name:</strong> <a href={`https://github.com/${repo.full_name}`} target="_blank">{repo.name}</a>
+              </p>
+              {repo.description && <p>
+                <strong>Description:</strong> {repo.description}
+              </p>}
+              {repo.language && <p>
+                <strong>Language:</strong> {repo.language}
+              </p>}
+              <p>
+                <strong>Last updated:</strong> {new Date(repo.updated_at).toLocaleString('en-US')}
+              </p>
+              <hr/>
+            </div>
+          ))}
         </>
       )}
     </div>
