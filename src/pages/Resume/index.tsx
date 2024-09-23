@@ -35,26 +35,27 @@ export default function Resume() {
       ) : (
         <div>
           <div className={'row'}>
+            <h3>{user.name}</h3>
+            <p>
+              Github username -{' '}
+              <a className={'link-dark'} href={`https://github.com/${username}`} target={'_blank'}>{username}</a>
+            </p>
             <div className="col-md-4">
               <div className={'round-image'}>
                 <img src={user.avatar_url} alt={user.name}/>
               </div>
-              <h3>{user.name}</h3>
-              <p>
-                Github username -{' '}
-                <a className={'link-dark'} href={`https://github.com/${username}`} target={'_blank'}>{username}</a>
-              </p>
             </div>
             <div className="col-md-8">
               <p>
                 Github member since <strong>{new Date(user.created_at).getFullYear()}</strong>,
                 and have <strong>
-                  <a href={`https://github.com/${username}?tab=repositories`} target="_blank">
-                    {user.public_repos} public repositories
-                  </a>
-                </strong>.
+                <a href={`https://github.com/${username}?tab=repositories`} target="_blank">
+                  {user.public_repos} public repositories
+                </a>
+              </strong>.
               </p>
               <p>
+                {user.bio}
               </p>
             </div>
           </div>
@@ -69,8 +70,12 @@ export default function Resume() {
           </p>
         ) : (
           <div className={'row'}>
-            <div className={'col-md-4'}>
-              <h3>Languages:</h3>
+          <div className={'col-md-4'}>
+              <h3>
+                <em>
+                  Languages:
+                </em>
+              </h3>
             </div>
             <div className={'col-md-8'}>
               <ul>
@@ -83,7 +88,11 @@ export default function Resume() {
             </div>
             <hr/>
             <div className={'col-md-4'}>
-              <h3>Most recent repositories:</h3>
+              <h3>
+                <em>
+                  Most recent repositories:
+                </em>
+              </h3>
             </div>
             <div className={'col-md-8'}>
               {repositories.map(repo => (
@@ -92,7 +101,7 @@ export default function Resume() {
                     <span>
                       <a href={`https://github.com/${repo.full_name}`} target="_blank">{repo.name}</a> {repo.language && <>({repo.language})</>}
                     </span>
-                    <span>
+                    <span className={'date'}>
                       {new Date(repo.created_at).getFullYear()} - {new Date(repo.updated_at).getFullYear()}
                     </span>
                   </h4>

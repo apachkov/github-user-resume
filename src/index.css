@@ -28,3 +28,8 @@ code {
   display: flex;
   justify-content: space-between;
 }
+
+.date {
+  font-size: 14px;
+  color: #777;
+}
