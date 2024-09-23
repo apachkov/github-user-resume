@@ -6,72 +6,105 @@ export default function Resume() {
   const { username } = useParams();
   const { user, loading: isUserLoading } = useGithubUser(username);
   const { repositories, languages, totalRepositories, loading: isRepositoriesLoading } = useGithubUserRepositories(username);
+  const isUserNotFound = user.status == 404;
+  const APIRateLimitExceeded = user.message?.startsWith('API rate limit exceeded');
+
+  if (APIRateLimitExceeded) {
+    return (
+      <div>
+        <h3>
+          API rate limit exceeded.
+        </h3>
+        <p>
+          Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h2>Resume</h2>
-      <p>
-        This is the resume for <strong>{username}</strong>.
-      </p>
-      <hr />
-      <h3>User</h3>
       {isUserLoading ? (
         <p>
           Loading user...
         </p>
-      ) : user.status == 404 ? (
-        <p>
+      ) : isUserNotFound ? (
+        <h3>
           User not found.
-        </p>
+        </h3>
       ) : (
         <div>
-          <p>
-            <strong>Name:</strong> {user.name}
-          </p>
-          <p>
-            <strong>Public Repos:</strong> {user.public_repos}
-          </p>
-          <p>
-            <strong>Github member since:</strong> {new Date(user.created_at).toLocaleString('en-US')}
-          </p>
+          <div className={'row'}>
+            <div className="col-md-4">
+              <div className={'round-image'}>
+                <img src={user.avatar_url} alt={user.name}/>
+              </div>
+              <h3>{user.name}</h3>
+              <p>
+                Github username -{' '}
+                <a className={'link-dark'} href={`https://github.com/${username}`} target={'_blank'}>{username}</a>
+              </p>
+            </div>
+            <div className="col-md-8">
+              <p>
+                Github member since <strong>{new Date(user.created_at).getFullYear()}</strong>,
+                and have <strong>
+                  <a href={`https://github.com/${username}?tab=repositories`} target="_blank">
+                    {user.public_repos} public repositories
+                  </a>
+                </strong>.
+              </p>
+              <p>
+              </p>
+            </div>
+          </div>
         </div>
       )}
-      <hr />
-      {isRepositoriesLoading ? (
-        <p>
-          Loading repositories...
-        </p>
-      ) : (
-        <>
-          <h3>Languages:</h3>
-          <ul>
-            {languages && Object.keys(languages).map((language) => (
-              <li key={language}>
-                <strong>{language}</strong>: {Math.round(languages[language] / totalRepositories * 100)}%
-              </li>
-            ))}
-          </ul>
-          <hr/>
-          <h3>Repositories:</h3>
-          {repositories.map(repo => (
-            <div key={repo.id}>
-              <p>
-                <strong>Name:</strong> <a href={`https://github.com/${repo.full_name}`} target="_blank">{repo.name}</a>
-              </p>
-              {repo.description && <p>
-                <strong>Description:</strong> {repo.description}
-              </p>}
-              {repo.language && <p>
-                <strong>Language:</strong> {repo.language}
-              </p>}
-              <p>
-                <strong>Last updated:</strong> {new Date(repo.updated_at).toLocaleString('en-US')}
-              </p>
-              <hr/>
+      <hr/>
+      {isUserNotFound ?
+        null
+        : isRepositoriesLoading ? (
+          <p>
+            Loading repositories...
+          </p>
+        ) : (
+          <div className={'row'}>
+            <div className={'col-md-4'}>
+              <h3>Languages:</h3>
             </div>
-          ))}
-        </>
-      )}
+            <div className={'col-md-8'}>
+              <ul>
+                {languages && Object.keys(languages).map((language) => (
+                  <li key={language}>
+                    <strong>{language}</strong>: {Math.round(languages[language] / totalRepositories * 100)}%
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <hr/>
+            <div className={'col-md-4'}>
+              <h3>Most recent repositories:</h3>
+            </div>
+            <div className={'col-md-8'}>
+              {repositories.map(repo => (
+                <div key={repo.id}>
+                  <h4 className={'space-between'}>
+                    <span>
+                      <a href={`https://github.com/${repo.full_name}`} target="_blank">{repo.name}</a> {repo.language && <>({repo.language})</>}
+                    </span>
+                    <span>
+                      {new Date(repo.created_at).getFullYear()} - {new Date(repo.updated_at).getFullYear()}
+                    </span>
+                  </h4>
+                  {repo.description && <p>
+                    {repo.description}
+                  </p>}
+                  <hr/>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
     </div>
   );
 }

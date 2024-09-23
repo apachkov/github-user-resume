@@ -10,3 +10,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.round-image {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  img {
+    width: 200px;
+    height: 200px;
+    vertical-align: top;
+  }
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}

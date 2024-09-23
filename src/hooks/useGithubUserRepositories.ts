@@ -6,6 +6,7 @@ interface Repository {
   description: string | null;
   language: string | null;
   full_name: string;
+  created_at: string;
   updated_at: string;
 }
 
@@ -21,9 +22,14 @@ export default function useGithubUserRepositories(username: string | undefined) 
     }
 
     fetch(`https://api.github.com/users/${username}/repos`)
-      .then((response) => response.json())
-      .then((data: Repository[]) => {
+      .then((response) => {
         setLoading(false);
+        if (response.status === 403) {
+          throw new Error('Rate limit exceeded');
+        }
+        return response.json();
+      })
+      .then((data: Repository[]) => {
         data.sort((a, b) => b.updated_at > a.updated_at ? 1 : -1);
         const first10Repos = data.slice(0, 10);
         setRepositories(first10Repos);
