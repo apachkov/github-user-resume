@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import useGithubUser from "../../hooks/useGithubUser";
 import useGithubUserRepositories from "../../hooks/useGithubUserRepositories";
+import PieChartComponent from "../../components/pie-chart";
 
 export default function Resume() {
   const { username } = useParams();
   const { user, loading: isUserLoading } = useGithubUser(username);
-  const { repositories, languages, totalRepositories, loading: isRepositoriesLoading } = useGithubUserRepositories(username);
+  const { repositories, languages, loading: isRepositoriesLoading } = useGithubUserRepositories(username);
   const isUserNotFound = user.status == 404;
   const APIRateLimitExceeded = user.message?.startsWith('API rate limit exceeded');
 
@@ -78,13 +79,7 @@ export default function Resume() {
               </h3>
             </div>
             <div className={'col-md-8'}>
-              <ul>
-                {languages && Object.keys(languages).map((language) => (
-                  <li key={language}>
-                    <strong>{language}</strong>: {Math.round(languages[language] / totalRepositories * 100)}%
-                  </li>
-                ))}
-              </ul>
+              <PieChartComponent data={languages}></PieChartComponent>
             </div>
             <hr/>
             <div className={'col-md-4'}>
