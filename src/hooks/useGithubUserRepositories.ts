@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 interface Repository {
   id: number;
   name: string;
-  description: string;
-  language: string;
+  description: string | null;
+  language: string | null;
   full_name: string;
   updated_at: string;
 }
@@ -28,13 +28,14 @@ export default function useGithubUserRepositories(username: string | undefined) 
         const first10Repos = data.slice(0, 10);
         setRepositories(first10Repos);
         const newLanguages = data.reduce((acc: any, repo: any) => {
-          if (repo.language) {
-            if (acc[repo.language]) {
-              acc[repo.language] += 1;
-            } else {
-              acc[repo.language] = 1;
-            }
+          const language = repo.language || 'Not specified';
+
+          if (acc[language]) {
+            acc[language] += 1;
+          } else {
+            acc[language] = 1;
           }
+
           return acc;
         }, {});
         setLanguages(newLanguages);
